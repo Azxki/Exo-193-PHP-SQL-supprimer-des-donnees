@@ -1,12 +1,33 @@
 <?php
 
-/**
- * 1. Importez la table user dans une base de données que vous aurez créée au préalable via PhpMyAdmin
- * 2. En utilisant l'objet de connexion qui a déjà été défini =>
- *    --> Remplacez les informations de connexion ( nom de la base et vérifiez les paramètres d'accès ).
- *    --> Supprimez le dernier utilisateur de la liste, faites une capture d'écran dans PhpMyAdmin pour me montrer que vous avez supprimé l'entrée et pushez la avec votre code.
- *    --> Faites un truncate de la base de données, les auto incréments présents seront remis à 0
- *    --> Insérez un nouvel utilisateur dans la table ( faites un screenshot et ajoutez le au repo )
- *    --> Finalement, vous décidez de supprimer complètement la table
- *    --> Et pour finir, comme vous n'avez plus de table dans la base de données, vous décidez de supprimer aussi la base de données.
- */
+$username = 'root';
+$password = '';
+$host = 'localhost';
+$data = 'test';
+
+$file = file_get_contents('./SQL/user.sql');
+
+try {
+    $db = new PDO('mysql:host=' . $host . ';dbname=' . $data . ';charset=utf8', $username, $password);
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $db->lastInsertId();
+
+    $sql = "DELETE FROM utilisateurs WHERE id = 1";
+    $sql = "TRUNCATE TABLE utilisateurs";
+    $sql = "
+                INSERT INTO utilisateurs (nom, prenom, rue, numero, code_postal, ville, pays, mail)
+                VALUES ('Doe', 'John', 'Rue Arlette Corrente', '54', '59610', 'Fourmies', 'France', 'test@test.fr')
+        ";
+    $sql = "DROP TABLE utilisateurs";
+    $sql = "DROP DATABASE $data";
+
+    $db->exec($sql);
+
+
+
+    echo "requête validé !";
+}
+catch (PDOException $exception) {
+    echo $exception->getMessage();
+}
